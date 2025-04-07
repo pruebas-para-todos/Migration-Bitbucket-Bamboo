@@ -1,0 +1,68 @@
+name: Migration-Bitbucket-Repositories
+permissions: write-all
+on:
+  workflow_dispatch:
+    # inputs:
+    #   repository_list_path:
+    #     description: 'The repository path of json repositories list'
+    #     required: false
+    #     type: string
+
+      # INSTALL DEPENDENCIES
+      # LOGIN BITBUCKET 
+      # Login Github
+      # Recorrer listado repos
+        # Obtener ref repo y clonarlo
+        # Crear nuevo repositorio en Github con el mismo nombre
+        # Subir contenido clonado en local
+      # Correr herramienta migracion bamboo pipelines y analizar o ejecutar
+        
+jobs:
+  clone-repo:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout GitHub repository
+      uses: actions/checkout@v2
+      
+      # in progress
+    # - name: Install OpenSSH
+    #   run: |
+    #     sudo apt update && sudo apt install openssh-client
+    #     ssh -V
+    #     eval "$(ssh-agent -s)"
+    #     ssh-keygen -t ed25519 -b 4096 -C "amolinab@emeal.nttdata.com" -f ~/.ssh/ssh-key-test
+
+        
+    #     ssh-add ~/.ssh/ssh-key-test
+    #     echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/ssh-key-test
+    #     echo "${{ secrets.SSH_PUBLIC_KEY }}" > ~/.ssh/ssh-key-test.pub
+    #     chmod 600 ~/.ssh/ssh-key-test
+    #     ssh-add ~/.ssh/id_ed2551
+        
+      
+    # - name: Get List repositories
+    #   run: |
+    #     curl --request GET \
+    #       --url 'https://api.bitbucket.org/2.0/repositories/noeorgagutierrez' \
+    #       --header 'Authorization: Bearer <access_token>' \ #Falta Token por ser premium feature, un acces key no se si es posible
+    #       --header 'Accept: application/json'
+
+    - name: Create repository in Github
+      run: |
+        curl -L \
+        -X POST \
+        -H "Accept: application/vnd.github+json" \
+        -H "Authorization: Bearer ${{ secrets.API_TOKEN_GITHUB }}" \
+        -H "X-GitHub-Api-Version: 2022-11-28" \
+        https://api.github.com/orgs/Alberto-Molina-nttdata/repos \
+        -d '{"name":"frontend-angular","description":"This is your frontend-angular repository","homepage":"https://github.com","private":true,"has_issues":true,"has_projects":true,"has_wiki":true,"auto_init":true}'
+    
+    
+    - name: Clone Bitbucket repository
+      run: |
+        git clone --mirror https://amolinab1@bitbucket.org/noeorgagutierrez/frontend-angular.git
+        cd frontend-angular.git
+        git remote set-url --push origin https://${{ secrets.API_TOKEN_GITHUB }}@github.com/Alberto-Molina-nttdata/frontend-angular.git
+        git push --mirror --force origin
+        echo "prueba"

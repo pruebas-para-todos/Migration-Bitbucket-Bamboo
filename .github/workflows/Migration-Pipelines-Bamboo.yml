@@ -1,0 +1,33 @@
+name: Migration-Bamboo-Pipelines
+on:
+  workflow_dispatch:
+  workflow_call:  
+jobs:
+  audit-and-export:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.API_TOKEN_GITHUB }}
+      GITHUB_ACCESS_TOKEN: ${{ secrets.API_TOKEN_GITHUB }}
+      GITHUB_INSTANCE_URL: "https://github.com"
+      BAMBOO_ACCESS_TOKEN: ${{ secrets.TOKEN_BAMBOO }} 
+      BAMBOO_INSTANCE_URL: "http://backstage-demo-bamboo.westeurope.cloudapp.azure.com"
+
+    steps:
+      - name: Install Actions Importer CLI
+        run: |
+          gh extension install github/gh-actions-importer
+
+      - name: Actions Importer Ops
+        run: |
+          gh actions-importer update
+          gh actions-importer audit bamboo --output-dir tmp/audit
+
+      - name: Upload Logs (Backup)
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bamboo-audit-backup
+          path: tmp/audit/
+ 
+ 
+ 
