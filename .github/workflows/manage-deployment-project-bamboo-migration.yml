@@ -1,4 +1,4 @@
-name: Manage Build Plan Bamboo Migration
+name: Manage Deployment Project Bamboo Migration
 on:
     workflow_dispatch:
         inputs:
