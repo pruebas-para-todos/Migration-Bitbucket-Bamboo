@@ -4,8 +4,8 @@ on:
   workflow_call:
 
 env:
-  GH_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
-  GITHUB_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+  GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+  GITHUB_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
   GITHUB_INSTANCE_URL: ${{ vars.SHELF_INSTANCE_URL}}
   BAMBOO_ACCESS_TOKEN: ${{ secrets.BAMBOO_ACCESS_TOKEN }} 
   BAMBOO_INSTANCE_URL: ${{ vars.BAMBOO_INSTANCE_URL }}   
