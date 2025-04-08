@@ -16,30 +16,31 @@ on:
         # Crear nuevo repositorio en Github con el mismo nombre
         # Subir contenido clonado en local
       # Correr herramienta migracion bamboo pipelines y analizar o ejecutar
+      
         
 jobs:
-  clone-repo:
+  get-bitbucket-repos:
     runs-on: ubuntu-latest
-
+    env:
+      REPO_PATH: repo-list
+      JSON_LIST_PATH: repos
+    outputs:
+      repo-list: ${{steps.repo.outputs.repo-list}}
     steps:
-    - name: Checkout GitHub repository
-      uses: actions/checkout@v2
-      
-      # in progress
-    # - name: Install OpenSSH
-    #   run: |
-    #     sudo apt update && sudo apt install openssh-client
-    #     ssh -V
-    #     eval "$(ssh-agent -s)"
-    #     ssh-keygen -t ed25519 -b 4096 -C "amolinab@emeal.nttdata.com" -f ~/.ssh/ssh-key-test
-
-        
-    #     ssh-add ~/.ssh/ssh-key-test
-    #     echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/ssh-key-test
-    #     echo "${{ secrets.SSH_PUBLIC_KEY }}" > ~/.ssh/ssh-key-test.pub
-    #     chmod 600 ~/.ssh/ssh-key-test
-    #     ssh-add ~/.ssh/id_ed2551
-        
+    - name: Checkout REPO-LIST
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.API_TOKEN_GITHUB }}
+        path: ${{ env.REPO_PATH }}
+        ref: main
+        sparse-checkout: |
+          ${{ env.JSON_LIST_PATH }}/repos.json
+    - name: Get Repos
+      id: repo
+      working-directory: ${{ env.REPO_PATH }}/${{env.JSON_LIST_PATH}}
+      run: |
+        LIST=$(jq -c '.' repos.json)
+        echo "repo-list=$LIST" >> $GITHUB_OUTPUT
       
     # - name: Get List repositories
     #   run: |
@@ -47,22 +48,30 @@ jobs:
     #       --url 'https://api.bitbucket.org/2.0/repositories/noeorgagutierrez' \
     #       --header 'Authorization: Bearer <access_token>' \ #Falta Token por ser premium feature, un acces key no se si es posible
     #       --header 'Accept: application/json'
-
-    - name: Create repository in Github
-      run: |
-        curl -L \
-        -X POST \
-        -H "Accept: application/vnd.github+json" \
-        -H "Authorization: Bearer ${{ secrets.API_TOKEN_GITHUB }}" \
-        -H "X-GitHub-Api-Version: 2022-11-28" \
-        https://api.github.com/orgs/Alberto-Molina-nttdata/repos \
-        -d '{"name":"frontend-angular","description":"This is your frontend-angular repository","homepage":"https://github.com","private":true,"has_issues":true,"has_projects":true,"has_wiki":true,"auto_init":true}'
+  generate-repos:
+    runs-on: ubuntu-latest
+    needs: get-bitbucket-repos
+    strategy:
+      matrix: ${{fromJson(needs.get-bitbucket-repos.outputs.repo-list)}} 
+    steps:
+      - name: Print name
+        run: |
+          echo ${{ matrix.name }}
+    # - name: Create repository in Github
+    #   run: |
+    #     curl -L \
+    #     -X POST \
+    #     -H "Accept: application/vnd.github+json" \
+    #     -H "Authorization: Bearer ${{ secrets.API_TOKEN_GITHUB }}" \
+    #     -H "X-GitHub-Api-Version: 2022-11-28" \
+    #     https://api.github.com/orgs/Alberto-Molina-nttdata/repos \
+    #     -d '{"name":"${{ matrix.name }}","description":"This is your ${{ matrix.name }} repository","homepage":"https://github.com","private":true,"has_issues":true,"has_projects":true,"has_wiki":true,"auto_init":true}'
     
     
-    - name: Clone Bitbucket repository
-      run: |
-        git clone --mirror https://amolinab1@bitbucket.org/noeorgagutierrez/frontend-angular.git
-        cd frontend-angular.git
-        git remote set-url --push origin https://${{ secrets.API_TOKEN_GITHUB }}@github.com/Alberto-Molina-nttdata/frontend-angular.git
-        git push --mirror --force origin
-        echo "prueba"
+    # - name: Clone Bitbucket repository
+    #   run: |
+    #     git clone --mirror https://amolinab1@bitbucket.org/noeorgagutierrez/${{ matrix.name }}.git
+    #     cd frontend-angular.git
+    #     git remote set-url --push origin https://${{ secrets.API_TOKEN_GITHUB }}@github.com/Alberto-Molina-nttdata/${{ matrix.name }}.git
+    #     git push --mirror --force origin
+    #     echo "prueba"
