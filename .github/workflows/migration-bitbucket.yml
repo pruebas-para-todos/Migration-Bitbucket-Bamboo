@@ -57,11 +57,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: get-bitbucket-repos
     strategy:
-      matrix: ${{fromJson(needs.get-bitbucket-repos.outputs.repo-list)}} 
+      matrix: 
+        repo: ${{fromJson(needs.get-bitbucket-repos.outputs.repo-list)}} 
     steps:
       - name: Print name
         run: |
-          echo ${{ matrix.name }}
+          echo ${{ matrix.repo.name }}
     # - name: Create repository in Github
     #   run: |
     #     curl -L \
