@@ -48,10 +48,10 @@ jobs:
             fi
 
         - name: Upload Logs
-          if: ${{ inputs.migration_type}} == "dry-run"
+          if: ${{ always() }}
           uses: actions/upload-artifact@v4
           with:
-            name: bamboo-logs-dry-run # Generar una fecha de logs o algo identificativo
+            name: bamboo-logs-operation # Generar una fecha de logs o algo identificativo
             path: ${{ inputs.output_directory }}
 
 
