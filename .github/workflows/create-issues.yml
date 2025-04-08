@@ -20,7 +20,7 @@ jobs:
           response=$(curl -X GET "${{ env.BAMBOO_INSTANCE_URL }}/rest/api/latest/plan" \
                           -H "Authorization: Bearer ${{ env.BAMBOO_ACCESS_TOKEN }}")
           # Extraer las claves <key> y guardarlas en un archivo JSON
-          xmlstarlet sel -t -m "//planKey/key" -v . -n plans.xml | jq -R -s 'split("\n")[:-1]' > plans.json
+          xmlstarlet sel -t -m "//planKey/key" -v . -n $response | jq -R -s 'split("\n")[:-1]' > plans.json
           # Mostrar el contenido del archivo JSON
           cat plans.json
  
