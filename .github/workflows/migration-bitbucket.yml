@@ -42,6 +42,10 @@ jobs:
         LIST=$(jq -c '.' repos.json)
         echo $LIST
         echo "repo-list=$LIST" >> $GITHUB_OUTPUT
+    - name: Print
+      run: |
+        echo ${{ steps.repo.outputs.repo-list}}
+
       
     # - name: Get List repositories
     #   run: |
