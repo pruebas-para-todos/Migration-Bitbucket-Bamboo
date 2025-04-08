@@ -1,17 +1,17 @@
 name: Audit Bamboo Server
 on:
   workflow_dispatch:
-  workflow_call:  
+  workflow_call:
+
+env:
+  GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+  GITHUB_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+  GITHUB_INSTANCE_URL: ${{ vars.SHELF_INSTANCE_URL}}
+  BAMBOO_ACCESS_TOKEN: ${{ secrets.TOKEN_BAMBOO }} 
+  BAMBOO_INSTANCE_URL: "http://backstage-demo-bamboo.westeurope.cloudapp.azure.com"   
 jobs:
   audit-and-export:
     runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-      GITHUB_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-      GITHUB_INSTANCE_URL: ${{ vars.SHELF_INSTANCE_URL}}
-      BAMBOO_ACCESS_TOKEN: ${{ secrets.TOKEN_BAMBOO }} 
-      BAMBOO_INSTANCE_URL: "http://backstage-demo-bamboo.westeurope.cloudapp.azure.com" 
-
     steps:
       - name: Install Actions Importer CLI
         run: |

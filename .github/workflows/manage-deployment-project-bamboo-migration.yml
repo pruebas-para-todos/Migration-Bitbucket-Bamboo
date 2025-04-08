@@ -23,7 +23,9 @@ on:
                 required: true
                 description: "Can view the logs of the dry run and the converted workflow files in the specified output directory."
                 default: tmp/output/
-
+env:
+    GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+    
 jobs:
   init-migration:
     runs-on: ubuntu-latest
@@ -31,7 +33,7 @@ jobs:
         - name: Install Actions Importer CLI
           run: |
             gh extension install github/gh-actions-importer
-            
+
         - name: init-migration
           run: |
             if [ ${{ inputs.migration_type}} == "dry-run" ]; then
