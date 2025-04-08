@@ -31,7 +31,7 @@ jobs:
           # Mostrar el contenido del archivo JSON
           list=$(cat plans.json)
           echo "plan-list=$list" >> $GITHUB_OUTPUT
-   create-issue:
+  create-issue:
     runs-on: ubuntu-latest
     needs: get-plans
     strategy:
