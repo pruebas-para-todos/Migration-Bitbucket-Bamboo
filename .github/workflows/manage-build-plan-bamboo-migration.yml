@@ -13,10 +13,12 @@ on:
                 type: string
                 required: true
                 description: "The plan's project and plan key in the format <projectKey>-<planKey>."
+                default: MIG-MP
             target_repo_url:
                 type: string
                 required: true
                 description: "The url of the target repo"
+                default: https://github.com/pruebas-para-todos/target-repository
             output_directory:
                 type: string
                 required: true
