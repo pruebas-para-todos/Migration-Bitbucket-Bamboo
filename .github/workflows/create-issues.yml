@@ -36,7 +36,8 @@ jobs:
     needs: get-plans
     strategy:
       matrix:
-        plan-list: ${{ needs.get-plans.outputs.plan-list}}
+        # plan-list: ${{ needs.get-plans.outputs.plan-list}}
+        plan-list: ${{fromJson(needs.get-plans.outputs.plan-list)}} 
     steps:
       - name:  Print name
         run: echo ${{matrix.plan-list}}
