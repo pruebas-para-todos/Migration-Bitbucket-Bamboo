@@ -1,0 +1,52 @@
+name: Manage Build Plan Bamboo Migration
+on:
+    workflow_dispatch:
+        inputs:
+            migration_type:
+                type: choice
+                required: true
+                options: 
+                    - dry-run
+                    - migrate
+                description: "The migration type"
+            deployment_project_id:
+                type: string
+                required: true
+                description: "The ID of the deployment project you are converting"
+            target_repo_url:
+                type: string
+                required: true
+                description: "The url of the target repo"
+            output_directory:
+                type: string
+                required: true
+                description: "Can view the logs of the dry run and the converted workflow files in the specified output directory."
+                default: tmp/output/
+
+jobs:
+  init-migration:
+    runs-on: ubuntu-latest
+    steps:
+        - name: init-migration
+          run: |
+            if [ ${{ inputs.migration_type}} == "dry-run" ]; then
+                gh action ${{ inputs.migration_type }} bamboo deployment --deployment-project-id :${{ inputs.deployment_project_id }} --output-dir ${{ inputs.output_directory }}
+            else
+                gh action ${{ inputs.migration_type }} bamboo deployment --deployment-project-id :${{ inputs.deployment_project_id }} --target-url :${{ inputs.target_repo_url }} --output-dir ${{ inputs.output_directory }}
+            fi
+
+        - name: Upload Logs
+          if: ${{ inputs.migration_type}} == "dry-run"
+          uses: actions/upload-artifact@v4
+          with:
+            name: bamboo-logs-dry-run # Generar una fecha de logs o algo identificativo
+            path: ${{ inputs.output_directory }}
+
+
+
+
+# Dry run deployment project
+# gh actions-importer dry-run bamboo deployment --deployment-project-id :my_deployment_project_id --output-dir tmp/dry-run
+
+# Production deployment project
+# gh actions-importer migrate bamboo deployment --deployment-project-id :my_deployment_project_id --target-url :target_url --output-dir tmp/migrate
