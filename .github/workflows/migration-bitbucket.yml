@@ -33,12 +33,12 @@ jobs:
         LIST=$(jq -c '.' ${{ env.JSON_NAME }})
         echo $LIST
         echo "repo-list=$LIST" >> $GITHUB_OUTPUT
-    - name: GET Request
-      run: |
-        curl --request GET \
-          --url 'https://api.bitbucket.org/2.0/repositories/${{ env.ORG_NAME }}' \
-          --header 'Authorization: Bearer ${{ env.BITBUCKET_TOKEN }}' \ #Falta Token por ser premium feature, un acces key no se si es posible
-          --header 'Accept: application/json'
+    # - name: GET Request
+    #   run: |
+    #     curl --request GET \
+    #       --url 'https://api.bitbucket.org/2.0/repositories/${{ env.ORG_NAME }}' \
+    #       --header 'Authorization: Bearer ${{ env.BITBUCKET_TOKEN }}' \ #Falta Token por ser premium feature, un acces key no se si es posible
+    #       --header 'Accept: application/json'
   generate-repos:
     runs-on: ubuntu-latest
     needs: get-bitbucket-repos
