@@ -60,7 +60,7 @@ jobs:
         -d '{"name":"${{ matrix.repo.name }}","description":"This is your ${{ matrix.repo.name }} repository","homepage":"https://github.com","private":false,"has_issues":true,"has_projects":true,"has_wiki":true}'
     - name: Clone Bitbucket repository
       run: |
-        git clone --mirror https://amolinab1@bitbucket.org/${{ env.ORG_NAME }}/${{ matrix.repo.name }}.git
+        git clone --mirror https://amolinab1@bitbucket.org/${{ env.BITBUCKET_ORG_NAME }}/${{ matrix.repo.name }}.git
         cd frontend-angular.git
         git remote set-url --push origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ env.GITHUB_ORG_NAME }}/${{ matrix.repo.name }}.git
         git push --mirror --force origin
