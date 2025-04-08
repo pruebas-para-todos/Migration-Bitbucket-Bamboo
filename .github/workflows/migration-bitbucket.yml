@@ -40,6 +40,7 @@ jobs:
       working-directory: ${{ env.REPO_PATH }}/${{env.JSON_LIST_PATH}}
       run: |
         LIST=$(jq -c '.' repos.json)
+        echo $LIST
         echo "repo-list=$LIST" >> $GITHUB_OUTPUT
       
     # - name: Get List repositories
