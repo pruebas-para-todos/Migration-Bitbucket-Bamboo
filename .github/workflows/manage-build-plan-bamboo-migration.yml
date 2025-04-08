@@ -24,20 +24,25 @@ on:
                 default: tmp/output/
 env:
     GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+    GITHUB_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+    GITHUB_INSTANCE_URL: ${{ vars.SHELF_INSTANCE_URL}}
+    BAMBOO_ACCESS_TOKEN: ${{ secrets.TOKEN_BAMBOO }} 
+    BAMBOO_INSTANCE_URL: "http://backstage-demo-bamboo.westeurope.cloudapp.azure.com"
 jobs:
   init-migration:
     runs-on: ubuntu-latest
     steps:
-        - name: Install Actions Importer CLI
+        - name: Init Actions Importer CLI
           run: |
             gh extension install github/gh-actions-importer
+            gh actions-importer update
 
         - name: init-migration
           run: |
             if [ ${{ inputs.migration_type}} == "dry-run" ]; then
-                gh action ${{ inputs.migration_type }} bamboo build --plan-slug :${{ inputs.build_plan_slug}} --output-dir ${{ inputs.output_directory }}
+                gh actions-importer ${{ inputs.migration_type }} bamboo build --plan-slug ${{ inputs.build_plan_slug}} --output-dir ${{ inputs.output_directory }}
             else
-                gh action ${{ inputs.migration_type }} bamboo build --plan-slug :${{ inputs.build_plan_slug}} --target-url :${{ inputs.target_repo_url }} --output-dir ${{ inputs.output_directory }}
+                gh actions-importer ${{ inputs.migration_type }} bamboo build --plan-slug ${{ inputs.build_plan_slug}} --target-url :${{ inputs.target_repo_url }} --output-dir ${{ inputs.output_directory }}
             fi
 
         - name: Upload Logs
