@@ -62,6 +62,6 @@ jobs:
       run: |
         git clone --mirror https://amolinab1@bitbucket.org/${{ env.BITBUCKET_ORG_NAME }}/${{ matrix.repo.name }}.git
         cd frontend-angular.git
-        git remote set-url --push origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ env.GITHUB_ORG_NAME }}/${{ matrix.repo.name }}.git
+        git remote set-url --push origin https://${{ secrets.ACCESS_TOKEN }}@github.com/${{ env.GITHUB_ORG_NAME }}/${{ matrix.repo.name }}.git
         git push --mirror --force origin
         echo "prueba"
