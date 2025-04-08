@@ -62,20 +62,8 @@ jobs:
           -H "Authorization: Bearer ${{ env.GITHUB_ACCESS_TOKEN }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           https://api.github.com/repos/${{ github.repository_owner }}/importer-issue-ops/issues \
-          -d '{"title":"Bamboo: ${{ matrix.plan-list}}","body":"## Inputs
-
-          Plan Slug: ${{ matrix.plan-list }}
-
-          ## Available commands
-
-          The following commands can be executed by adding a comment to this issue:
-
-          - `/audit`
-          - `/dry-run --plan-type build|deployment`
-          - `/migrate --plan-type build|deployment --target-url :github-repository-url`
-
-          **Note:** The `plan-type` option will default to `build` if omitted. If any remaining options are missing, the command will not be successful.","labels":["bamboo"]}'
-                            
+          -d '{"title":"Bamboo: ${{ matrix.plan-list}}","body":"Hola","labels":["bamboo"]}'
+                  
         
  
  
