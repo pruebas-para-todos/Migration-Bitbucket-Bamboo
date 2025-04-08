@@ -29,7 +29,7 @@ jobs:
           # Extraer las claves <key> y guardarlas en un archivo JSON
           xmlstarlet sel -t -m "//planKey/key" -v . -n plans.xml | jq -R -s 'split("\n")[:-1]' > plans.json
           # Mostrar el contenido del archivo JSON
-          list=$(cat plans.json)
+          list=$(cat plans.json | tr -d '[:space:]' | sed ':a;N;$!ba;s/\n//g')
           echo "plan-list=$list" >> $GITHUB_OUTPUT
   create-issue:
     runs-on: ubuntu-latest
