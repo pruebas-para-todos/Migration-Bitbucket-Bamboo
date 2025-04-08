@@ -4,7 +4,8 @@ on:
   workflow_dispatch:
 # Variables usadas en los dos jobs
 env:
-  ORG_NAME: noeorgagutierrez
+  BITBUCKET_ORG_NAME: noeorgagutierrez
+  GITHUB_ORG_NAME: ${{ github.repository_owner }}
 jobs:
   get-bitbucket-repos:
     runs-on: ubuntu-latest
@@ -36,7 +37,7 @@ jobs:
     # - name: GET Request
     #   run: |
     #     curl --request GET \
-    #       --url 'https://api.bitbucket.org/2.0/repositories/${{ env.ORG_NAME }}' \
+    #       --url 'https://api.bitbucket.org/2.0/repositories/${{ env.BITBUCKET_ORG_NAME }}' \
     #       --header 'Authorization: Bearer ${{ env.BITBUCKET_TOKEN }}' \ #Falta Token por ser premium feature, un acces key no se si es posible
     #       --header 'Accept: application/json'
   generate-repos:
@@ -44,8 +45,6 @@ jobs:
     needs: get-bitbucket-repos
     permissions: write-all
     continue-on-error: true
-    env:
-      ORG_NAME: ${{ github.repository_owner }}
     strategy:
       matrix: 
         repo: ${{fromJson(needs.get-bitbucket-repos.outputs.repo-list)}} 
@@ -57,12 +56,12 @@ jobs:
         -H "Accept: application/vnd.github+json" \
         -H "Authorization: Bearer ${{ secrets.ACCESS_TOKEN }}" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
-        https://api.github.com/orgs/${{ env.ORG_NAME }}/repos \
+        https://api.github.com/orgs/${{ env.GITHUB_ORG_NAME }}/repos \
         -d '{"name":"${{ matrix.repo.name }}","description":"This is your ${{ matrix.repo.name }} repository","homepage":"https://github.com","private":false,"has_issues":true,"has_projects":true,"has_wiki":true}'
     - name: Clone Bitbucket repository
       run: |
         git clone --mirror https://amolinab1@bitbucket.org/${{ env.ORG_NAME }}/${{ matrix.repo.name }}.git
         cd frontend-angular.git
-        git remote set-url --push origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ env.ORG_NAME }}/${{ matrix.repo.name }}.git
+        git remote set-url --push origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ env.GITHUB_ORG_NAME }}/${{ matrix.repo.name }}.git
         git push --mirror --force origin
         echo "prueba"
