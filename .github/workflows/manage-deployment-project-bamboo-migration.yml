@@ -37,9 +37,9 @@ jobs:
         - name: init-migration
           run: |
             if [ ${{ inputs.migration_type}} == "dry-run" ]; then
-                gh actions-importer ${{ inputs.migration_type }} bamboo deployment --deployment-project-id :${{ inputs.deployment_project_id }} --output-dir ${{ inputs.output_directory }}
+                gh actions-importer ${{ inputs.migration_type }} bamboo deployment --deployment-project-id ${{ inputs.deployment_project_id }} --output-dir ${{ inputs.output_directory }}
             else
-                gh actions-importer ${{ inputs.migration_type }} bamboo deployment --deployment-project-id :${{ inputs.deployment_project_id }} --target-url :${{ inputs.target_repo_url }} --output-dir ${{ inputs.output_directory }}
+                gh actions-importer ${{ inputs.migration_type }} bamboo deployment --deployment-project-id ${{ inputs.deployment_project_id }} --target-url :${{ inputs.target_repo_url }} --output-dir ${{ inputs.output_directory }}
             fi
 
         - name: Upload Logs
