@@ -27,6 +27,10 @@ jobs:
   init-migration:
     runs-on: ubuntu-latest
     steps:
+        - name: Install Actions Importer CLI
+          run: |
+            gh extension install github/gh-actions-importer
+            
         - name: init-migration
           run: |
             if [ ${{ inputs.migration_type}} == "dry-run" ]; then

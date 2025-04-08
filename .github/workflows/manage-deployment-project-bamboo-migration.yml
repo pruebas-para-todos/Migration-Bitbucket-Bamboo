@@ -17,6 +17,7 @@ on:
                 type: string
                 required: true
                 description: "The url of the target repo"
+                default: https://github.com/pruebas-para-todos/Migration-Bitbucket-Bamboo
             output_directory:
                 type: string
                 required: true
@@ -27,6 +28,10 @@ jobs:
   init-migration:
     runs-on: ubuntu-latest
     steps:
+        - name: Install Actions Importer CLI
+          run: |
+            gh extension install github/gh-actions-importer
+            
         - name: init-migration
           run: |
             if [ ${{ inputs.migration_type}} == "dry-run" ]; then
