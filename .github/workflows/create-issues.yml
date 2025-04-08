@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: GET All Plans | Bamboo
         run: |
+          sudo apt-get update
+          sudo apt-get install -y xmlstarlet
           response=$(curl -X GET "${{ env.BAMBOO_INSTANCE_URL }}/rest/api/latest/plan" \
                           -H "Authorization: Bearer ${{ env.BAMBOO_ACCESS_TOKEN }}")
           # Extraer las claves <key> y guardarlas en un archivo JSON
