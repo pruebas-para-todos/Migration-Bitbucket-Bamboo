@@ -3,17 +3,13 @@ on:
     workflow_call:
         inputs:
             migration_type:
-                type: choice
-                required: true
-                options: 
-                    - dry-run
-                    - migrate
-                description: "The migration type"
-            deployment_project_id:
                 type: string
                 required: true
+                description: "The migration type"
+            deployment_project_id:
+                type: number
+                required: true
                 description: "The ID of the deployment project you are converting"
-                default: "1048577"
             target_repo_url:
                 type: string
                 required: true
