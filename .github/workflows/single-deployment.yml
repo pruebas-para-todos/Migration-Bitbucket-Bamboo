@@ -48,14 +48,5 @@ jobs:
           if: ${{ always() }}
           uses: actions/upload-artifact@v4
           with:
-            name: bamboo-logs-operation # Generar una fecha de logs o algo identificativo
+            name: "Deployment: ${{ inputs.deployment_project_id}}"
             path: ${{ inputs.output_directory }}
-
-
-
-
-# Dry run deployment project
-# gh actions-importer dry-run bamboo deployment --deployment-project-id :my_deployment_project_id --output-dir tmp/dry-run
-
-# Production deployment project
-# gh actions-importer migrate bamboo deployment --deployment-project-id :my_deployment_project_id --target-url :target_url --output-dir tmp/migrate
