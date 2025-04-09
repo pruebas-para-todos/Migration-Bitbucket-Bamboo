@@ -12,8 +12,8 @@ on:
             build_plan_slug:
                 type: string
                 required: false
-                description: "The plan's project and plan key in the format <projectKey>-<planKey>. Leave blank to perform all"
-                default: MIG-MP
+                description: "<projectKey>-<planKey>. Leave blank to perform all"
+                default: <projectKey>-<planKey>
             target_repo_url:
                 type: string
                 required: true
@@ -55,7 +55,7 @@ jobs:
             list=$(cat plans.json | tr -d '[:space:]' | sed ':a;N;$!ba;s/\n//g')
             echo "plan-list=$list" >> $GITHUB_OUTPUT
           else
-            list=["${{build_plan_slug}}"]
+            list=["${{inputs.build_plan_slug}}"]
             echo "plan-list=$list" >> $GITHUB_OUTPUT
           fi
   create-issue:
