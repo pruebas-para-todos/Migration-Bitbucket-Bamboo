@@ -24,6 +24,31 @@ on:
                 required: true
                 description: "can view the logs of the dry run and the converted workflow files in the specified output directory."
                 default: tmp/output/
+    workflow_call:
+        inputs:
+            migration_type:
+                type: choice
+                required: true
+                options: 
+                    - dry-run
+                    - migrate
+                description: "The migration type"
+            build_plan_slug:
+                type: string
+                required: true
+                description: "The plan's project and plan key in the format <projectKey>-<planKey>."
+                default: MIG-MP
+            target_repo_url:
+                type: string
+                required: true
+                description: "The url of the target repo"
+                default: https://github.com/pruebas-para-todos/target-repository
+            output_directory:
+                type: string
+                required: true
+                description: "can view the logs of the dry run and the converted workflow files in the specified output directory."
+                default: tmp/output/
+
 env:
     GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
     GITHUB_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
