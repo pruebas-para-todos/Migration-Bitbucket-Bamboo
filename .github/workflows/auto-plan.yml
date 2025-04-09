@@ -65,7 +65,7 @@ jobs:
       matrix:
         # plan-list: ${{ needs.get-plans.outputs.plan-list}}
         plan-list: ${{fromJson(needs.get-plans.outputs.plan-list)}} 
-    uses: pruebas-para-todos/Migration-Bitbucket-Bamboo/.github/workflows/single-build.yml@main
+    uses: pruebas-para-todos/Migration-Bitbucket-Bamboo/.github/workflows/single-plan.yml@main
     secrets: inherit
     with:
         migration_type: ${{inputs.migration_type}}
