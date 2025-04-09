@@ -3,11 +3,8 @@ on:
     workflow_call:
         inputs:
             migration_type:
-                type: choice
+                type: string
                 required: true
-                options: 
-                    - dry-run
-                    - migrate
                 description: "The migration type"
             build_plan_slug:
                 type: string
