@@ -1,29 +1,5 @@
 name: Manage Deployment Project Bamboo Migration
 on:
-    workflow_dispatch:
-        inputs:
-            migration_type:
-                type: choice
-                required: true
-                options: 
-                    - dry-run
-                    - migrate
-                description: "The migration type"
-            deployment_project_id:
-                type: string
-                required: true
-                description: "The ID of the deployment project you are converting"
-                default: "1048577"
-            target_repo_url:
-                type: string
-                required: true
-                description: "The url of the target repo"
-                default: https://github.com/pruebas-para-todos/Migration-Bitbucket-Bamboo
-            output_directory:
-                type: string
-                required: true
-                description: "Can view the logs of the dry run and the converted workflow files in the specified output directory."
-                default: tmp/output/
     workflow_call:
         inputs:
             migration_type:

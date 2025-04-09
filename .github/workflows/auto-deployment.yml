@@ -1,0 +1,71 @@
+name: Auto Migrate Deployments
+permissions: write-all
+on:
+  workflow_dispatch:
+        inputs:
+            migration_type:
+                type: choice
+                required: true
+                options: 
+                    - dry-run
+                    - migrate
+                description: "The migration type"
+            deployment_project_id:
+                type: number
+                required: false
+                description: "The ID of the deployment project you are converting"
+                default: 000000
+            target_repo_url:
+                type: string
+                required: true
+                description: "The url of the target repo"
+                default: https://github.com/pruebas-para-todos/target-repository
+            output_directory:
+                type: string
+                required: true
+                description: "can view the logs of the dry run and the converted workflow files in the specified output directory."
+                default: tmp/output/
+
+env:
+  GH_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+  GITHUB_ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+  GITHUB_INSTANCE_URL: ${{ vars.SHELF_INSTANCE_URL}}
+  BAMBOO_ACCESS_TOKEN: ${{ secrets.BAMBOO_ACCESS_TOKEN }} 
+  BAMBOO_INSTANCE_URL: ${{ vars.BAMBOO_INSTANCE_URL }}   
+jobs:
+  get-deployments:
+    outputs:
+      deployments-list: ${{ steps.deployments-list.outputs.deployments-list }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: GET All Deployments | Bamboo
+        id: deployments-list
+        run: |
+          if [ -n "${{ inputs.deployment_project_id }}" ]; then
+            response=$(curl -X GET "${{ env.BAMBOO_INSTANCE_URL }}/rest/api/latest/deploy/project/all" \
+                            -H "Authorization: Bearer ${{ env.BAMBOO_ACCESS_TOKEN }}")
+            # Guardar la respuesta en un archivo temporal
+            echo "$response" > deployments.json
+            # Extraer las claves <key> y guardarlas en un archivo JSON
+            jq '[.[] | .id]' deployments.json > ids.json
+            echo "$ids" > ids.json
+            echo "deployments-list=$ids" >> $GITHUB_OUTPUT
+          else
+            list=["${{inputs.deployment_project_id}}"]
+            echo "deployments-list=$list" >> $GITHUB_OUTPUT
+          fi
+  perform-migration:
+    needs: get-deployments
+    strategy:
+      matrix:
+        # deployments-list: ${{ needs.get-deployments.outputs.deployments-list}}
+        deployments-list: ${{fromJson(needs.get-deployments.outputs.deployments-list)}} 
+    uses: pruebas-para-todos/Migration-Bitbucket-Bamboo/.github/workflows/single-build.yml@main
+    secrets: inherit
+    with:
+        migration_type: ${{inputs.migration_type}}
+        build_plan_slug: ${{ matrix.deployments-list }}
+        target_repo_url: ${{ inputs.target_repo_url }}
+        output_directory: ${{ inputs.output_directory }}
+
+    
