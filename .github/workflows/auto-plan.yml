@@ -69,7 +69,7 @@ jobs:
     secrets: inherit
     with:
         migration_type: ${{inputs.migration_type}}
-        build_plan_slug: ${{ inputs.matrix.plan-list }}
+        build_plan_slug: ${{ matrix.plan-list }}
         target_repo_url: ${{ inputs.target_repo_url }}
         output_directory: ${{ inputs.output_directory }}
 
