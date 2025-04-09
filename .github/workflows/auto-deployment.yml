@@ -11,10 +11,10 @@ on:
                     - migrate
                 description: "The migration type"
             deployment_project_id:
-                type: number
+                type: string
                 required: false
                 description: "The ID of the deployment project you are converting"
-                default: 000000
+                default: "000000"
             target_repo_url:
                 type: string
                 required: true
