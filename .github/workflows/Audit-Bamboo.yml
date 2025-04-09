@@ -1,4 +1,4 @@
-name: Audit Bamboo Server
+name: Audit | Bamboo
 on:
   workflow_dispatch:
   workflow_call:
