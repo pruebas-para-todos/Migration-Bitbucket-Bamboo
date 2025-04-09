@@ -1,4 +1,5 @@
 name: Auto Migrate Plans
+permissions: write-all
 on:
   workflow_dispatch:
         inputs:
