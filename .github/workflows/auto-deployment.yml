@@ -48,8 +48,7 @@ jobs:
             echo "$response" > deployments.json
             echo "Esto me llega: $response"
             # Extraer las claves ID y guardarlas en un archivo JSON
-            jq '[.[] | .id]' deployments.json > ids.json
-            echo "$ids" > ids.json
+            ids=$(jq '[.[] | .id]' deployments.json)
             echo "Esto son los ID: $ids"
             echo "deployments-list=$ids" >> $GITHUB_OUTPUT
           else
