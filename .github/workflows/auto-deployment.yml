@@ -46,7 +46,8 @@ jobs:
                             -H "Authorization: Bearer ${{ env.BAMBOO_ACCESS_TOKEN }}")
             # Guardar la respuesta en un archivo temporal
             echo "$response" > deployments.json
-            # Extraer las claves <key> y guardarlas en un archivo JSON
+            echo "Esto me llega: $response"
+            # Extraer las claves ID y guardarlas en un archivo JSON
             jq '[.[] | .id]' deployments.json > ids.json
             echo "$ids" > ids.json
             echo "deployments-list=$ids" >> $GITHUB_OUTPUT
