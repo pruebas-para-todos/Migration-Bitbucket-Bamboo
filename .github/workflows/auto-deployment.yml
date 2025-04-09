@@ -1,4 +1,4 @@
-name: Auto Migrate Deployments
+name: Auto Migrate | Deployments
 permissions: write-all
 on:
   workflow_dispatch:

@@ -1,4 +1,4 @@
-name: Single Plan
+name: RU | Single Plan
 on:
     workflow_call:
         inputs:

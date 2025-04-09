@@ -1,4 +1,4 @@
-name: Single Deployment
+name: RU | Single Deployment
 on:
     workflow_call:
         inputs:
