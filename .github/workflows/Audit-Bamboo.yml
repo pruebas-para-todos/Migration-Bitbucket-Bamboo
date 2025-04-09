@@ -21,7 +21,7 @@ jobs:
         run: |
           gh actions-importer update
           gh actions-importer audit bamboo --output-dir tmp/audit
-          gh actions-importer forecast bamboo --output-dir tmp/forecast_reports/result
+          gh actions-importer forecast bamboo --project PLAN --output-dir tmp/forecast_reports/result
 
       - name: Upload Migration Logs
         if: ${{ always() }}
