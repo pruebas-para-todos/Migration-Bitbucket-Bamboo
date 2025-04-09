@@ -60,7 +60,7 @@ jobs:
       matrix:
         # deployments-list: ${{ needs.get-deployments.outputs.deployments-list}}
         deployments-list: ${{fromJson(needs.get-deployments.outputs.deployments-list)}} 
-    uses: pruebas-para-todos/Migration-Bitbucket-Bamboo/.github/workflows/single-build.yml@main
+    uses: pruebas-para-todos/Migration-Bitbucket-Bamboo/.github/workflows/single-deployment.yml@main
     secrets: inherit
     with:
         migration_type: ${{inputs.migration_type}}
