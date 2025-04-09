@@ -7,7 +7,7 @@ on:
                 required: true
                 description: "The migration type"
             deployment_project_id:
-                type: number
+                type: string
                 required: true
                 description: "The ID of the deployment project you are converting"
             target_repo_url:
