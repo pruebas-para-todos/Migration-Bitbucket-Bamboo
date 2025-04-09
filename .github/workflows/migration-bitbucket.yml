@@ -1,4 +1,4 @@
-name: Migration-Bitbucket-Repositories
+name: Migration | Bitbucket to GitHub
 permissions: write-all
 on:
   workflow_dispatch:
