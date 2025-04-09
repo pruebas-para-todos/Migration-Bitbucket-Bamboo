@@ -58,21 +58,19 @@ jobs:
             list=["${{inputs.build_plan_slug}}"]
             echo "plan-list=$list" >> $GITHUB_OUTPUT
           fi
-  create-issue:
+  perform-migration:
     runs-on: ubuntu-latest
     needs: get-plans
     strategy:
       matrix:
         # plan-list: ${{ needs.get-plans.outputs.plan-list}}
         plan-list: ${{fromJson(needs.get-plans.outputs.plan-list)}} 
-    steps:
-      - name: Perform Migration
-        uses: ${{ github.repository_owner }}/Migration-Bitbucket-Bamboo/.github/workflows/single-build.yml@main
-        secrets: inherit
-        with:
-            migration_type: ${{inputs.migration_type}}
-            build_plan_slug: ${{ inputs.matrix.plan-list }}
-            target_repo_url: ${{ inputs.target_repo_url }}
-            output_directory: ${{ inputs.output_directory }}
+    uses: ${{ github.repository_owner }}/Migration-Bitbucket-Bamboo/.github/workflows/single-build.yml@main
+    secrets: inherit
+    with:
+        migration_type: ${{inputs.migration_type}}
+        build_plan_slug: ${{ inputs.matrix.plan-list }}
+        target_repo_url: ${{ inputs.target_repo_url }}
+        output_directory: ${{ inputs.output_directory }}
 
     
