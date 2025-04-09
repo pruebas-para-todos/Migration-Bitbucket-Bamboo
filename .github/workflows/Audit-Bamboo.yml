@@ -21,13 +21,20 @@ jobs:
         run: |
           gh actions-importer update
           gh actions-importer audit bamboo --output-dir tmp/audit
+          gh actions-importer forecast bamboo --output-dir tmp/forecast_reports
 
       - name: Upload Logs (Backup)
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: bamboo-audit-backup
+          name: bamboo-migration-audit
           path: tmp/audit/
- 
- 
+
+      - name: Upload Logs (Backup)
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: bamboo-forecast-audit
+          path: tmp/forecast_reports/ 
+
  
