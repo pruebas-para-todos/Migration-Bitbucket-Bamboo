@@ -1,4 +1,4 @@
-name: Manage Deployment Project Bamboo Migration
+name: Single Deployment
 on:
     workflow_call:
         inputs:

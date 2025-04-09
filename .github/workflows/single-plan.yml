@@ -1,4 +1,4 @@
-name: Manage Build Plan Bamboo Migration
+name: Single Plan
 on:
     workflow_call:
         inputs:
