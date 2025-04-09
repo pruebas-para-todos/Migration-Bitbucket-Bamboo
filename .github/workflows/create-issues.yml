@@ -48,21 +48,27 @@ jobs:
           ref: main
           sparse-checkout: |
             .github/ISSUE_TEMPLATE/bamboo.md
-      - name: Replace values in template
-        working-directory: importer-issue-ops/.github/ISSUE_TEMPLATE
-        run: |
-          sed -i 's/_Replace this text with the Bamboo plan slug (e.g. PAN-SLUG) to migrate pipelines from._/${{ matrix.plan-list}}/g' bamboo.md
-          template=$(cat bamboo.md)
-          echo "$template"
       - name: Create Issue in Github
         run: |
-          curl -L \
+          response=$(curl -L \
           -X POST \
           -H "Accept: application/vnd.github+json" \
           -H "Authorization: Bearer ${{ env.GITHUB_ACCESS_TOKEN }}" \
           -H "X-GitHub-Api-Version: 2022-11-28" \
           https://api.github.com/repos/${{ github.repository_owner }}/importer-issue-ops/issues \
-          -d '{"title":"Bamboo: ${{ matrix.plan-list}}","body":"Plan Slug: ${{ matrix.plan-list}}","labels":["bamboo"]}'
+          -d '{"title":"Bamboo: ${{ matrix.plan-list}}","body":"Plan Slug: ${{ matrix.plan-list}}","labels":["bamboo"]}')
+          number=$(echo "$response" | jq '.number')
+          echo "El número es: $number"
+      - name: Create Issue Comment
+        run: |
+          curl -L \
+          -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer <YOUR-TOKEN>" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/${{ github.repository_owner }}/importer-issue-ops/issues/$number/comments \
+          -d '{"body":"/migrate --plan-type build --target-url https://github.com/pruebas-para-todos/target-repository"}'
+      
                   
         
  
