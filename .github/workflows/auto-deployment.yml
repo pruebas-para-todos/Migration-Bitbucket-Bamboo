@@ -50,6 +50,7 @@ jobs:
             # Extraer las claves ID y guardarlas en un archivo JSON
             jq '[.[] | .id]' deployments.json > ids.json
             echo "$ids" > ids.json
+            echo "Esto son los ID: $ids"
             echo "deployments-list=$ids" >> $GITHUB_OUTPUT
           else
             list=["${{inputs.deployment_project_id}}"]
