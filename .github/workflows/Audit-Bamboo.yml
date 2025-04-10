@@ -46,6 +46,9 @@ jobs:
         run: |  
           rm audit_summary.md || true
           sudo cp ../tmp/audit/audit_summary.md .
+          git add .
+          git commit -m "Uploaded audit_summary.md"
+          git push
           
 
  
