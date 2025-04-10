@@ -13,14 +13,10 @@ jobs:
   audit-and-export:
     runs-on: ubuntu-latest
     steps:
-      - name: Cache Actions Importer CLI
-        uses: actions/cache@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
         with:
-          path: ~/.local/share/gh/extensions/github/gh-actions-importer
-          key: gh-actions-importer-${{ runner.os }}-${{ hashFiles('**/gh-actions-importer') }}
-          restore-keys: |
-            gh-actions-importer-${{ runner.os }}-
-
+          path: audit
       - name: Install Actions Importer CLI
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
@@ -44,11 +40,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bamboo-forecast-audit
-          path: tmp/forecast_reports/ 
-      - name: Cache Result
-        uses: actions/cache@v4
-        with:
-          path: tmp/audit/
-          key: audit-results
+          path: tmp/forecast_reports/
+      - name: Upload files to repo
+        working-directory: audit
+        run: |  
+          rm audit_summary.md || true
+          sudo cp ../tmp/audit/audit_summary.md .
+          
 
  
