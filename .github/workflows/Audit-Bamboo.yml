@@ -42,14 +42,14 @@ jobs:
           name: bamboo-forecast-audit
           path: tmp/forecast_reports/
       - name: Upload files to repo
-        working-directory: audit
+        working-directory: audit/audit
         run: |  
-          rm audit_summary.md || true
-          sudo cp ../tmp/audit
+          rm -r * || true
+          sudo cp ../../tmp/audit .
           git config user.name  ${{ github.actor }}
           git config user.email "${{ github.actor }}@users.noreply.github.com"
           git add .
-          git commit -m "Uploaded audit_summary.md"
+          git commit -m "Uploaded audit"
           git push
           
 
