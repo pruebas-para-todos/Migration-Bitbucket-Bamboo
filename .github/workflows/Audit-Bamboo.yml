@@ -7,11 +7,6 @@ on:
                 type: string
                 required: true
                 description: Repo name to generate files
-            REPO_PATH:
-                type: string
-                required: true
-                description: The repo path to copy the files
-                default: .
   workflow_call:
 
 env:
@@ -55,7 +50,7 @@ jobs:
       #     path: tmp/forecast_reports/
 
       - name: Upload files to repo
-        working-directory: ${{ inputs.OUTPUT_REPO }}/${{ inputs.REPO_PATH }}
+        working-directory: ${{ inputs.OUTPUT_REPO }}
         run: |  
           git config user.name  ${{ github.actor }}
           git config user.email "${{ github.actor }}@users.noreply.github.com"
