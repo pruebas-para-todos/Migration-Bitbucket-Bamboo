@@ -61,7 +61,7 @@ jobs:
           git config user.email "${{ github.actor }}@users.noreply.github.com"
           rm -r * || true
           sudo cp -r ../tmp/audit/. .
-          
+          mv audit_summary.md README.md
           git add .
           git commit -m "Uploaded audit"
           git push
