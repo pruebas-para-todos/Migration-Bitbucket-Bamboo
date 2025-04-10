@@ -27,19 +27,27 @@ jobs:
         ref: main
         sparse-checkout: |
           ${{ env.JSON_LIST_PATH }}/${{ env.JSON_NAME }}
-    - name: Get Repos
-      id: repo
-      working-directory: ${{ env.REPO_PATH }}/${{env.JSON_LIST_PATH}}
-      run: |
-        LIST=$(jq -c '.' ${{ env.JSON_NAME }})
-        echo $LIST
-        echo "repo-list=$LIST" >> $GITHUB_OUTPUT
-    # - name: GET Request
+    # - name: Get Repos
+    #   name: id
+    #   working-directory: ${{ env.REPO_PATH }}/${{env.JSON_LIST_PATH}}
     #   run: |
-    #     curl --request GET \
-    #       --url 'https://api.bitbucket.org/2.0/repositories/${{ env.BITBUCKET_ORG_NAME }}' \
-    #       --header 'Authorization: Bearer ${{ env.BITBUCKET_TOKEN }}' \ #Falta Token por ser premium feature, un acces key no se si es posible
-    #       --header 'Accept: application/json'
+    #     LIST=$(jq -c '.' ${{ env.JSON_NAME }})
+    #     echo $LIST
+    #     echo "repo-list=$LIST" >> $GITHUB_OUTPUT
+    - name: GET Request
+      id: repo
+      run: |
+        curl -L \
+        response=$(curl -X GET "https://api.github.com/orgs/${{ env.GITHUB_ORG_NAME }}/repos" \
+                        -H "Accept: application/vnd.github+json" \
+                        -H "Authorization: Bearer ${{ secrets.TODELETE_GH_TOKEN }}")
+        # Guardar la respuesta en un archivo temporal
+        echo "$response" > repos.json
+        echo "Esto me llega: $response"
+        # Extraer las claves name y guardarlas en un archivo JSON
+        names=$(jq '[.[] | .name]' repos.json | tr -d '[:space:]' | sed ':a;N;$!ba;s/\n//g')
+        echo "Esto son los name: $names"
+        echo "repo-list=$names" >> $GITHUB_OUTPUT
   generate-repos:
     runs-on: ubuntu-latest
     needs: get-bitbucket-repos
