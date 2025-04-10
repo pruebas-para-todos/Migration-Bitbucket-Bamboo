@@ -28,6 +28,7 @@ jobs:
         ref: main
         sparse-checkout: |
           ${{ env.JSON_LIST_PATH }}/${{ env.JSON_NAME }}
+    # We'll have to change this URL to the Bitbucket one and adapt the script
     - name: GET Request
       id: repo
       run: |
