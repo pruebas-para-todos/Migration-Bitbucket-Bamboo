@@ -13,7 +13,16 @@ jobs:
   audit-and-export:
     runs-on: ubuntu-latest
     steps:
+      - name: Cache Actions Importer CLI
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/gh/extensions/github/gh-actions-importer
+          key: gh-actions-importer-${{ runner.os }}-${{ hashFiles('**/gh-actions-importer') }}
+          restore-keys: |
+            gh-actions-importer-${{ runner.os }}-
+
       - name: Install Actions Importer CLI
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           gh extension install github/gh-actions-importer
 
