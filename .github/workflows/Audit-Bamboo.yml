@@ -56,10 +56,11 @@ jobs:
       - name: Upload files to repo
         working-directory: ${{ inputs.OUTPUT_REPO }}/${{ inputs.REPO_PATH }}
         run: |  
-          rm -r * || true
-          sudo cp -r ../tmp/audit/. .
           git config user.name  ${{ github.actor }}
           git config user.email "${{ github.actor }}@users.noreply.github.com"
+          rm -r * || true
+          sudo cp -r ../tmp/audit/. .
+          
           git add .
           git commit -m "Uploaded audit"
           git push
