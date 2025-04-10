@@ -5,11 +5,11 @@ on:
             OUTPUT_REPO:
                 type: string
                 required: true
-                description: "Repo name to generate files"
+                description: Repo name to generate files
             REPO_PATH:
                 type: string
                 required: true
-                description: "The url of the target repo"
+                description: The repo path to copy the files
                 default: .
   workflow_call:
 
