@@ -1,6 +1,16 @@
 name: Audit | Bamboo
 on:
   workflow_dispatch:
+    inputs:
+            OUTPUT_REPO:
+                type: string
+                required: true
+                description: "Repo name to generate files"
+            REPO_PATH:
+                type: string
+                required: true
+                description: "The url of the target repo"
+                default: .
   workflow_call:
 
 env:
@@ -16,9 +26,9 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          path: audit
+          path: ${{ inputs.OUTPUT_REPO }}
+          repository: ${{ inputs.OUTPUT_REPO }}
       - name: Install Actions Importer CLI
-        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           gh extension install github/gh-actions-importer
 
@@ -28,21 +38,22 @@ jobs:
           gh actions-importer audit bamboo --output-dir tmp/audit
           gh actions-importer forecast bamboo --project PLAN --output-dir tmp/forecast_reports/result
 
-      - name: Upload Migration Logs
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: bamboo-migration-audit
-          path: tmp/audit/
+      # - name: Upload Migration Logs
+      #   if: ${{ always() }}
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: bamboo-migration-audit
+      #     path: tmp/audit/
 
-      - name: Upload Forecast Logs
-        if: ${{ always() }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: bamboo-forecast-audit
-          path: tmp/forecast_reports/
+      # - name: Upload Forecast Logs
+      #   if: ${{ always() }}
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: bamboo-forecast-audit
+      #     path: tmp/forecast_reports/
+
       - name: Upload files to repo
-        working-directory: audit/audit
+        working-directory: ${{ inputs.OUTPUT_REPO }}/${{ inputs.REPO_PATH }}
         run: |  
           rm -r * || true
           sudo cp -r ../../tmp/audit/. .
