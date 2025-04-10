@@ -45,7 +45,7 @@ jobs:
         working-directory: audit
         run: |  
           rm audit_summary.md || true
-          sudo cp ../tmp/audit/audit_summary.md .
+          sudo cp ../tmp/audit
           git config user.name  ${{ github.actor }}
           git config user.email "${{ github.actor }}@users.noreply.github.com"
           git add .
