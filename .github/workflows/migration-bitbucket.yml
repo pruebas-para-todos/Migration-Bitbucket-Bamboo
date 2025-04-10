@@ -57,6 +57,8 @@ jobs:
       matrix: 
         repo: ${{fromJson(needs.get-bitbucket-repos.outputs.repo-list)}} 
     steps:
+    - name: Print
+      run: echo "${{matrix}}"
     - name: Create repository in Github
       run: |
         curl -L \
