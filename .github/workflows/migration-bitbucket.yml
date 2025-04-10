@@ -37,7 +37,6 @@ jobs:
     - name: GET Request
       id: repo
       run: |
-        curl -L \
         response=$(curl -X GET "https://api.github.com/orgs/${{ env.GITHUB_ORG_NAME }}/repos" \
                         -H "Accept: application/vnd.github+json" \
                         -H "Authorization: Bearer ${{ secrets.TODELETE_GH_TOKEN }}")
