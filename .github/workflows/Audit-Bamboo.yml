@@ -13,9 +13,6 @@ jobs:
   audit-and-export:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4.2.2   
-        sparse-checkout: audit-bamboo
       - name: Install Actions Importer CLI
         run: |
           gh extension install github/gh-actions-importer
