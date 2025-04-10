@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           path: ${{ inputs.OUTPUT_REPO }}
-          repository: ${{ inputs.OUTPUT_REPO }}
+          repository: ${{ github.repository_owner }}/${{ inputs.OUTPUT_REPO }}
       - name: Install Actions Importer CLI
         run: |
           gh extension install github/gh-actions-importer
