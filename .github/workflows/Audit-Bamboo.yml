@@ -13,6 +13,9 @@ jobs:
   audit-and-export:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2   
+        sparse-checkout: audit-bamboo
       - name: Install Actions Importer CLI
         run: |
           gh extension install github/gh-actions-importer
@@ -36,5 +39,10 @@ jobs:
         with:
           name: bamboo-forecast-audit
           path: tmp/forecast_reports/ 
+      - name: Cache Result
+        uses: actions/cache@v4
+        with:
+          path: tmp/audit/
+          key: audit-results
 
  
