@@ -1,11 +1,8 @@
 name: 
-description: |
-  
-
 on:
     workflow_call:
         inputs:
-            python-version:
+            PYTHON_VERSION:
                 description: "Python version to use"
                 required: false
                 default: "3.11"
@@ -24,10 +21,10 @@ on:
                 type: string
                 
 permissions:
-  contents: write
-  pull-requests: write
+  write-all: true
 
 env:
+    WORKFLOW_REPO_PATH: workflow
     AI_TOOLS_BASE_PATH: test-gen
     FILE_NAME_PYTHON_REQUERIMENTS: requirements.txt
 jobs:
@@ -36,9 +33,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:        
-        - name: Print
+        - name: Checkout file
+          uses: actions/checkout@v4
+          with:
+            repository: ${{ inputs.REMOTE_REPO_NAME }}
+            path: ${{ env.WORKFLOW_REPO_PATH }}
+            ref: ${{ inputs.BRANCH_NAME }}
+            sparse-checkout: ${{ inputs.PATH_WORKFLOW_FILE }}
+        - name: Print file
+          working-directory: ${{ env.WORKFLOW_REPO_PATH }}
           run: |
-            echo "Hola"
+            cat ${{ inputs.PATH_WORKFLOW_FILE }}
         # - name: Setup environment variables
         #   id: setup_env_vars
         #   run: |  
