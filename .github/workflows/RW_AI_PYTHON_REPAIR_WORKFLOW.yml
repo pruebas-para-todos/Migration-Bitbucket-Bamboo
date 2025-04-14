@@ -23,6 +23,7 @@ on:
 permissions: write-all
 
 env:
+    REPOSITORY_OWNER: ${{ github.repository_owner }}
     WORKFLOW_REPO_PATH: workflow
     AI_TOOLS_BASE_PATH: test-gen
     FILE_NAME_PYTHON_REQUERIMENTS: requirements.txt
@@ -35,7 +36,7 @@ jobs:
         - name: Checkout file
           uses: actions/checkout@v4
           with:
-            repository: ${{ inputs.REMOTE_REPO_NAME }}
+            repository: ${{ env.REPOSITORY_OWNER }}/${{ inputs.REMOTE_REPO_NAME }}
             path: ${{ env.WORKFLOW_REPO_PATH }}
             ref: ${{ inputs.BRANCH_NAME }}
             sparse-checkout: ${{ inputs.PATH_WORKFLOW_FILE }}
