@@ -20,8 +20,7 @@ on:
                 required: true
                 type: string
                 
-permissions:
-  write-all: true
+permissions: write-all
 
 env:
     WORKFLOW_REPO_PATH: workflow
