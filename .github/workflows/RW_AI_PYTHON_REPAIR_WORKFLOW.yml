@@ -10,15 +10,15 @@ on:
                 required: false
                 default: "3.11"
                 type: string
-            remote-repo-name:
+            REMOTE_REPO_NAME:
                 description: "The name of caller repository"
                 required: true
                 type: string
-            branch_name:
+            BRANCH_NAME:
                 description: "The name of the branch to pull request"
                 required: true
                 type: string
-            path_workflow_file:
+            PATH_WORKFLOW_FILE:
                 description: "The path of the workloflow file"
                 required: true
                 type: string
