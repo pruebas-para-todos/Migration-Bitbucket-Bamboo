@@ -36,47 +36,50 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:        
-        - name: Setup environment variables
-          id: setup_env_vars
-          run: |  
-            set -e
+        - name: Print
+          run: |
+            echo "Hola"
+        # - name: Setup environment variables
+        #   id: setup_env_vars
+        #   run: |  
+        #     set -e
     
-        # # Use the provided branch name and repository name inputs
+        # # # Use the provided branch name and repository name inputs
         
-        # target_branch_name_simple="${{ inputs.branch-name }}"
+        # # target_branch_name_simple="${{ inputs.branch-name }}"
 
-        # # echo "branch_name=$branch_name" >> $GITHUB_OUTPUT
-        # # echo "target_branch_name=$target_branch_name" >> $GITHUB_OUTPUT
-        # # echo "target_branch_name_simple=$target_branch_name_simple" >> $GITHUB_OUTPUT
+        # # # echo "branch_name=$branch_name" >> $GITHUB_OUTPUT
+        # # # echo "target_branch_name=$target_branch_name" >> $GITHUB_OUTPUT
+        # # # echo "target_branch_name_simple=$target_branch_name_simple" >> $GITHUB_OUTPUT
 
 
-        - name: Checkout ai tools repo
-          uses: actions/checkout@v4
-          with:
-            repository: ${{ github.repository }}
-            path: ${{ env.AI_TOOLS_BASE_PATH }}
-            ref: ${{ github.ref_name }}
-            token: ${{ secrets.OWNER_TOKEN }}
+        # - name: Checkout ai tools repo
+        #   uses: actions/checkout@v4
+        #   with:
+        #     repository: ${{ github.repository }}
+        #     path: ${{ env.AI_TOOLS_BASE_PATH }}
+        #     ref: ${{ github.ref_name }}
+        #     token: ${{ secrets.OWNER_TOKEN }}
 
-        # Set up Python environment
-        - name: Set up python
-          uses: actions/setup-python@v5
-          with:
-            python-version: ${{ inputs.python-version }}
+        # # Set up Python environment
+        # - name: Set up python
+        #   uses: actions/setup-python@v5
+        #   with:
+        #     python-version: ${{ inputs.python-version }}
 
-        # Install dependencies from requirements.txt
-        - name: Install dependencies
-          run: |
-            python -m pip install --upgrade pip
-            pip install -r ${{ env.FILE_NAME_PYTHON_REQUERIMENTS }}
-            pip install -r ${{ env.AI_TOOLS_BASE_PATH }}/${{ env.FILE_NAME_PYTHON_REQUERIMENTS }}
+        # # Install dependencies from requirements.txt
+        # - name: Install dependencies
+        #   run: |
+        #     python -m pip install --upgrade pip
+        #     pip install -r ${{ env.FILE_NAME_PYTHON_REQUERIMENTS }}
+        #     pip install -r ${{ env.AI_TOOLS_BASE_PATH }}/${{ env.FILE_NAME_PYTHON_REQUERIMENTS }}
 
-        # Configure Git for committing changes
-        - name: Configure git
-          run: |
-            git config user.name "github-actions-bot"
-            git config user.email "github-actions-bot@github.com"
-            git config push.autoSetupRemote true
+        # # Configure Git for committing changes
+        # - name: Configure git
+        #   run: |
+        #     git config user.name "github-actions-bot"
+        #     git config user.email "github-actions-bot@github.com"
+        #     git config push.autoSetupRemote true
 
           
-        # Debe de generar una pull request con la respuesta de la IA a la rama que tiene la pull request que es la que ha activado el flujo
+        # # Debe de generar una pull request con la respuesta de la IA a la rama que tiene la pull request que es la que ha activado el flujo
