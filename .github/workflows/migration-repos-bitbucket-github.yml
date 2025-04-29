@@ -3,75 +3,127 @@ permissions: write-all
 on:
   workflow_dispatch:
     inputs:
+      platform_origin:
+        type: string
+        required: true
+        description: "The platform to migrate from"
+        default: "bitbucket"
+      platform_target:
+        type: string
+        required: true
+        description: "The platform to migrate to"
+        default: "github"
       repository_list:
         type: string
         required: true
         description: "The list of repositories to migrate"
         default: "repo1,repo2,repo3"
-        
-# Variables usadas en los dos jobs
 env:
-  BITBUCKET_ORG_NAME: private-organization-noe
-  GITHUB_ORG_NAME: ${{ github.repository_owner }}
-  TODELETE_GH_TOKEN: ${{ secrets.TODELETE_GH_TOKEN }}
+  GH_TOKEN: ${{ secrets.API_TOKEN_GITHUB }}      
+# Variables usadas en los dos jobs
+
 jobs:
-  get-bitbucket-repos:
+  setup-env:
     runs-on: ubuntu-latest
-    env:
-      # Variables usadas para probar la lista de repos
-      REPO_PATH: repo-list
-      JSON_LIST_PATH: repos
-      JSON_NAME: repos.json
-      # Variables que se usarán más adelante para hacer la llamada a la API de Bitbucket
-      BITBUCKET_TOKEN: ${{ secrets.BITBUCKET_TOKEN }}
-    outputs:
-      repo-list: ${{steps.repo.outputs.repo-list}}
     steps:
-    - name: Checkout REPO-LIST
-      uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        path: ${{ env.REPO_PATH }}
-        ref: main
-        sparse-checkout: |
-          ${{ env.JSON_LIST_PATH }}/${{ env.JSON_NAME }}
-    # We'll have to change this URL to the Bitbucket one and adapt the script
-    - name: GET Request
-      id: repo
+    - name: Set up name tokens
+      id: names-setup
       run: |
-        response=$(curl -X GET "https://api.github.com/orgs/${{ env.BITBUCKET_ORG_NAME }}/repos" \
-                        -H "Accept: application/vnd.github+json" \
-                        -H "Authorization: Bearer ${{ env.TODELETE_GH_TOKEN }}")
-        # Guardar la respuesta en un archivo temporal
-        echo "$response" > repos.json
-        echo "Esto me llega: $response"
-        # Extraer las claves name y guardarlas en un archivo JSON
-        names=$(jq '[.[] | .name]' repos.json | tr -d '[:space:]' | sed ':a;N;$!ba;s/\n//g')
-        echo "Esto son los name: $names"
-        echo "repo-list=$names" >> $GITHUB_OUTPUT
-  generate-repo:
-    runs-on: ubuntu-latest
-    needs: get-bitbucket-repos
-    continue-on-error: true
-    env: 
-      GITHUB_TOKEN: ${{ secrets.OWNER_TOKEN }}
-    strategy:
-      matrix: 
-        repo: ${{fromJson(needs.get-bitbucket-repos.outputs.repo-list)}} 
-    steps:
-    - name: Print
-      run: echo "${{matrix.repo}}"
-    - name: Create repository in Github
+        token_platform_origin=$(echo "TOKEN_${{ inputs.platform_origin }}" | tr '[:lower:]' '[:upper:]')
+        token_platform_target=$(echo "TOKEN_${{ inputs.platform_target }}" | tr '[:lower:]' '[:upper:]')
+
+        echo $token_platform_origin
+        echo $token_platform_target
+
+        echo "token_platform_origin=${token_platform_origin}" >> $GITHUB_OUTPUT
+        echo "token_platform_target=${token_platform_target}" >> $GITHUB_OUTPUT
+
+    - name: set up env variables
+      id: env-setup
       run: |
-        curl -L \
-        -X POST \
-        -H "Accept: application/vnd.github+json" \
-        -H "Authorization: Bearer ${{ env.GITHUB_TOKEN }}" \
-        -H "X-GitHub-Api-Version: 2022-11-28" \
-        https://api.github.com/orgs/${{ env.GITHUB_ORG_NAME }}/repos \
-        -d '{"name":"${{ matrix.repo }}","description":"This is your ${{ matrix.repo }} repository","homepage":"https://github.com","private":false,"has_issues":true,"has_projects":true,"has_wiki":true}'
-    - name: Clone Bitbucket repository
-      run: |
-        git clone --bare https://${{ env.TODELETE_GH_TOKEN }}@github.com/${{ env.BITBUCKET_ORG_NAME }}/${{ matrix.repo }}.git
-        cd ${{ matrix.repo }}.git
-        git push --mirror https://${{  env.GITHUB_TOKEN }}@github.com/${{ env.GITHUB_ORG_NAME }}/${{ matrix.repo }}.git
+        echo '${{ toJSON(secrets) }}' > data.json
+        gh secret list --repo ${{ github.repository_owner }}/${{ github.event.repository.name }} | tail -n +2 | while read -r line; do
+          SECRET_NAME=$(echo $line | awk '{print $1}')
+          if [[ "$SECRET_NAME" == "${{ steps.names-setup.outputs.token_platform_origin }}" || "$SECRET_NAME" == "${{ steps.names-setup.outputs.token_platform_target }}" ]]; then
+            SECRET_VALUE=$(jq -r --arg SECRET_NAME "$SECRET_NAME" '.[$SECRET_NAME]' data.json)
+            # echo "SECRET_NAME=${SECRET_NAME}" >> $GITHUB_OUTPUT
+            # echo "SECRET_VALUE=${SECRET_VALUE}" >> $GITHUB_OUTPUT
+            echo "Esto es el secret_name: $SECRET_NAME"
+            echo "Esto es el secret_value: $SECRET_VALUE"
+          fi
+        done
+# No puedo acceder a los secretos de forma dinamica
+        # echo "ORIGIN_TOKEN=${{ secrets[steps.names-setup.outputs.token_platform_origin] }}" >> $GITHUB_OUTPUT
+        # echo "TARGET_TOKEN=${{ secrets[steps.names-setup.outputs.token_platform_target] }}" >> $GITHUB_OUTPUT
+        # echo $ORIGIN_TOKEN
+        # echo $TARGET_TOKEN
+
+  #       echo "GITHUB_ORG_NAME=github_org_name" >> $GITHUB_ENV
+        # echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_OUTPUT
+  #       echo "TODELETE_GH_TOKEN=${{ secrets.TODELETE_GH_TOKEN }}" >> $GITHUB_ENV
+  #       echo "BITBUCKET_TOKEN=${{ secrets.BITBUCKET_TOKEN }}" >> $GITHUB_ENV
+  #       echo "GITHUB_ORG_NAME=github_org_name" >> $GITHUB_ENV
+  #       echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+  #       echo "TODELETE_GH_TOKEN=${{ secrets.TODELETE_GH_TOKEN }}" >> $GITHUB_ENV
+
+  # get-bitbucket-repos:
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     # Variables usadas para probar la lista de repos
+  #     REPO_PATH: repo-list
+  #     JSON_LIST_PATH: repos
+  #     JSON_NAME: repos.json
+  #     # Variables que se usarán más adelante para hacer la llamada a la API de Bitbucket
+  #     BITBUCKET_TOKEN: ${{ secrets.BITBUCKET_TOKEN }}
+  #   outputs:
+  #     repo-list: ${{steps.repo.outputs.repo-list}}
+  #   steps:
+  #   - name: Checkout REPO-LIST
+  #     uses: actions/checkout@v4
+  #     with:
+  #       token: ${{ secrets.GITHUB_TOKEN }}
+  #       path: ${{ env.REPO_PATH }}
+  #       ref: main
+  #       sparse-checkout: |
+  #         ${{ env.JSON_LIST_PATH }}/${{ env.JSON_NAME }}
+  #   # We'll have to change this URL to the Bitbucket one and adapt the script
+  #   - name: GET Request
+  #     if: ${{ github.event.inputs.repository_list == '' }}
+  #     id: repo
+  #     run: |
+  #       response=$(curl -X GET "https://api.github.com/orgs/${{ env.BITBUCKET_ORG_NAME }}/repos" \
+  #                       -H "Accept: application/vnd.github+json" \
+  #                       -H "Authorization: Bearer ${{ env.TODELETE_GH_TOKEN }}")
+  #       # Guardar la respuesta en un archivo temporal
+  #       echo "$response" > repos.json
+  #       echo "Esto me llega: $response"
+  #       # Extraer las claves name y guardarlas en un archivo JSON
+  #       names=$(jq '[.[] | .name]' repos.json | tr -d '[:space:]' | sed ':a;N;$!ba;s/\n//g')
+  #       echo "Esto son los name: $names"
+  #       echo "repo-list=$names" >> $GITHUB_OUTPUT
+  # generate-repo:
+  #   runs-on: ubuntu-latest
+  #   needs: get-bitbucket-repos
+  #   continue-on-error: true
+  #   env: 
+  #     GITHUB_TOKEN: ${{ secrets.OWNER_TOKEN }}
+  #   strategy:
+  #     matrix: 
+  #       repo: ${{fromJson(needs.get-bitbucket-repos.outputs.repo-list)}} 
+  #   steps:
+  #   - name: Print repository name
+  #     run: echo "${{matrix.repo}}"
+  #   - name: Create repository in Github
+  #     run: |
+  #       curl -L \
+  #       -X POST \
+  #       -H "Accept: application/vnd.github+json" \
+  #       -H "Authorization: Bearer ${{ env.GITHUB_TOKEN }}" \
+  #       -H "X-GitHub-Api-Version: 2022-11-28" \
+  #       https://api.github.com/orgs/${{ env.GITHUB_ORG_NAME }}/repos \
+  #       -d '{"name":"${{ matrix.repo }}","description":"This is your ${{ matrix.repo }} repository","homepage":"https://github.com","private":false,"has_issues":true,"has_projects":true,"has_wiki":true}'
+  #   - name: Clone Bitbucket repository
+  #     run: |
+  #       git clone --bare https://${{ env.TODELETE_GH_TOKEN }}@github.com/${{ env.BITBUCKET_ORG_NAME }}/${{ matrix.repo }}.git
+  #       cd ${{ matrix.repo }}.git
+  #       git push --mirror https://${{  env.GITHUB_TOKEN }}@github.com/${{ env.GITHUB_ORG_NAME }}/${{ matrix.repo }}.git
